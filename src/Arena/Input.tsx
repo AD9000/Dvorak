@@ -5,11 +5,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import { ThemeColor } from "../Colors";
 
 const useStyles = makeStyles({
-  textField: {
-    backgroundColor: "black",
-    fontSize: "100px",
+  root: {
+    display: "flex",
+    flexGrow: 1,
   },
-  resize: {
+  textBox: {
+    textDecoration: "none",
     fontSize: 50,
   },
 });
@@ -26,7 +27,8 @@ const Input = ({ changeHandler }: InputProps) => {
       onChange={changeHandler}
       InputProps={{
         classes: {
-          input: classes.resize,
+          root: classes.root,
+          input: classes.textBox,
         },
       }}
     />
