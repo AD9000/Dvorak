@@ -1,9 +1,10 @@
 export enum Color {
   RED = "red",
   GREEN = "green",
-  NONE = "none",
+  NONE = "inherit",
   WHITE = "white",
   BLACK = "black",
+  LIGHT_GREY = "lightgrey",
 }
 
 export interface ThemeColor {
@@ -18,6 +19,7 @@ export interface HighlightColor {
   BAD: ThemeColor;
   GREAT: ThemeColor;
   NONE: ThemeColor;
+  DONE: ThemeColor;
 }
 
 // the star: object
@@ -32,6 +34,10 @@ export const HighlightColors: HighlightColor = {
   },
   NONE: {
     bg: Color.NONE,
+    text: Color.BLACK,
+  },
+  DONE: {
+    bg: Color.LIGHT_GREY,
     text: Color.BLACK,
   },
 };

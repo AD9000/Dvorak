@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 import Arena from "./Arena/arena";
-import { MyContext } from "./Context";
+import { Word, AppContext } from "./Context";
 import "./App.css";
+import { HighlightColors } from "./Colors";
 
 // What a legend
 const durstenfeldShuffle = (array: string[]) => {
@@ -14,28 +15,31 @@ const durstenfeldShuffle = (array: string[]) => {
 };
 
 const App = () => {
-  const [words, setWords] = useState<string[]>([]);
+  const [words, setWords] = useState<Word[]>([]);
 
   // imagine not using a hardcoded list of words
   // Jk, this is temporary
   const getWords = (setWords: Function) => {
     fetch("/words.txt")
       .then((res) => res.text())
-      .then((text) => setWords(durstenfeldShuffle(text.split("\n"))));
+      .then((text) =>
+        setWords(
+          durstenfeldShuffle(text.split("\n")).map((word) => ({
+            word,
+            highlight: HighlightColors.NONE,
+          }))
+        )
+      );
   };
 
   useEffect(() => {
-    console.log("calling getWords");
     getWords(setWords);
   }, []);
 
-  useEffect(() => {
-    console.log(words);
-  }, [words]);
   return (
-    <MyContext.Provider value={{ words: words, setWords: setWords }}>
+    <AppContext.Provider value={{ words: words, setWords: setWords }}>
       <Arena />
-    </MyContext.Provider>
+    </AppContext.Provider>
   );
 };
 

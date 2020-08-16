@@ -2,14 +2,14 @@ import React, { useState, useEffect, useContext } from "react";
 import { Grid, Paper } from "@material-ui/core";
 import Input from "./Input";
 import { HighlightColors, ThemeColor } from "../Colors";
-import { MyContext } from "../Context";
+import { AppContext, Word } from "../Context";
 
 interface WordProps {
   children: React.ReactNode;
   highlight: ThemeColor;
 }
 
-const Word = ({ children, highlight }: WordProps) => {
+const WordBox = ({ children, highlight }: WordProps) => {
   return (
     <span
       style={{
@@ -23,50 +23,69 @@ const Word = ({ children, highlight }: WordProps) => {
   );
 };
 
-interface WordHandlerProps {
-  words: string[];
-}
-const WordHandler = ({ words }: WordHandlerProps) => {
-  // const [words, setWords] = useState<string[]>([]);
+const WordHandler = () => {
+  const { words } = useContext(AppContext);
   const [highlighted, setHighlighted] = useState<number>(0);
-  const [wordHighlight, setWordHighlight] = useState<ThemeColor>(
-    HighlightColors.NONE
-  );
+  const [lastHighlighted, setLastHighlighted] = useState<number | null>(null);
+  // const [wordHighlight, setWordHighlight] = useState<ThemeColor>(
+  //   HighlightColors.NONE
+  // );
   const [inputHighlight, setInputHighlight] = useState<ThemeColor>(
     HighlightColors.NONE
   );
 
+  interface setWordHighlightProps {
+    index: number;
+    color: ThemeColor;
+  }
   const clearInputHighLight = () => {
     setInputHighlight(HighlightColors.NONE);
   };
 
-  const compareWithWord = (entered: string) => {
+  const setWordHighlight = ({ index, color }: setWordHighlightProps) => {
+    words[index].highlight = color;
+  };
+
+  const clearWordHighlight = () => {
+    words[highlighted].highlight = HighlightColors.NONE;
+  };
+
+  const finishWord = () => {
+    setLastHighlighted(highlighted);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawEntered = e.target.value;
+    const entered = rawEntered.trim();
+    // Compare entered stuff with currently highlighted word
     if (!entered) {
       clearInputHighLight();
       return;
     }
 
-    const currentWord = words[highlighted];
-    setWordHighlight(
-      currentWord === entered ? HighlightColors.GREAT : HighlightColors.BAD
-    );
+    const currentWord = words[highlighted].word.trim();
+    console.log("'" + currentWord + "'", entered);
+    const isWordCorrect = currentWord === entered;
+    setWordHighlight({
+      index: highlighted,
+      color: isWordCorrect ? HighlightColors.GREAT : HighlightColors.BAD,
+    });
 
-    console.log(currentWord, entered);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const entered = e.target.value;
-    // Compare entered stuff with currently highlighted word
-    compareWithWord(entered);
+    if (isWordCorrect && rawEntered[rawEntered.length - 1] === " ") {
+      finishWord();
+      setWordHighlight({ index: highlighted + 1, color: HighlightColors.DONE });
+      setHighlighted(highlighted + 1);
+      // Remove stuff from input
+      e.target.value = "";
+    }
   };
 
   return (
     <>
       <Paper style={{ margin: "3rem" }}>
         <WordDisplay
-          words={words}
+          words={words.slice(0, 100)}
           highlightedIndex={highlighted}
-          highlightColor={wordHighlight}
         />
       </Paper>
       <Paper>
@@ -77,45 +96,28 @@ const WordHandler = ({ words }: WordHandlerProps) => {
 };
 
 interface WordDisplayProps {
-  words: string[];
+  words: Word[];
   highlightedIndex: number;
-  highlightColor: ThemeColor;
 }
-const WordDisplay = ({
-  words,
-  highlightedIndex,
-  highlightColor,
-}: WordDisplayProps) => {
+const WordDisplay = ({ words, highlightedIndex }: WordDisplayProps) => {
   return (
     <div style={{ display: "flex", flexWrap: "wrap", padding: "10px" }}>
-      {words.slice(0, 100).map((word, index) => (
-        <Word
-          key={word}
-          highlight={
-            highlightedIndex === index ? highlightColor : HighlightColors.NONE
-          }
-        >
-          {word}
-        </Word>
+      {words.map((word) => (
+        <WordBox key={word.word} highlight={word.highlight}>
+          {word.word}
+        </WordBox>
       ))}
     </div>
   );
 };
 
-// interface ArenaProps {
-//   words: string[];
-//   setWords: Function;
-// }
 const Arena = () => {
-  //({ words, setWords }: ArenaProps) => {
-  const { words } = useContext(MyContext);
-
   return (
     <Grid container direction="column">
       <Grid item container>
         <Grid item sm={1} />
         <Grid item sm={10}>
-          <WordHandler words={words} />
+          <WordHandler />
         </Grid>
         <Grid item sm={1} />
       </Grid>

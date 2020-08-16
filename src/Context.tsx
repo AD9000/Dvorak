@@ -1,12 +1,18 @@
 import React from "react";
+import { ThemeColor } from "./Colors";
+
+export interface Word {
+  word: string;
+  highlight: ThemeColor;
+}
 
 interface WordsContext {
-  words: string[];
+  words: Word[];
   setWords: Function;
 }
-const MyContext = React.createContext<WordsContext>({
+const AppContext = React.createContext<WordsContext>({
   words: [],
   setWords: () => {},
 });
 
-export { MyContext };
+export { AppContext };
