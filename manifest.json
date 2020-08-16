@@ -1,0 +1,9 @@
+{
+  "short_name": "Learn dvorak",
+  "name": "Learn dvorak keyboard layout",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
