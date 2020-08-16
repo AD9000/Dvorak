@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/dvorak.atharvdamle.com/static/css/main.5f361e03.chunk.css",
-    "main.js": "/dvorak.atharvdamle.com/static/js/main.5f4e5e43.chunk.js",
-    "main.js.map": "/dvorak.atharvdamle.com/static/js/main.5f4e5e43.chunk.js.map",
-    "runtime-main.js": "/dvorak.atharvdamle.com/static/js/runtime-main.50c4751e.js",
-    "runtime-main.js.map": "/dvorak.atharvdamle.com/static/js/runtime-main.50c4751e.js.map",
-    "static/js/2.de6767fb.chunk.js": "/dvorak.atharvdamle.com/static/js/2.de6767fb.chunk.js",
-    "static/js/2.de6767fb.chunk.js.map": "/dvorak.atharvdamle.com/static/js/2.de6767fb.chunk.js.map",
-    "index.html": "/dvorak.atharvdamle.com/index.html",
-    "precache-manifest.73dcb32405c96561ae1f1312ec39c5b7.js": "/dvorak.atharvdamle.com/precache-manifest.73dcb32405c96561ae1f1312ec39c5b7.js",
-    "service-worker.js": "/dvorak.atharvdamle.com/service-worker.js",
-    "static/css/main.5f361e03.chunk.css.map": "/dvorak.atharvdamle.com/static/css/main.5f361e03.chunk.css.map",
-    "static/js/2.de6767fb.chunk.js.LICENSE.txt": "/dvorak.atharvdamle.com/static/js/2.de6767fb.chunk.js.LICENSE.txt"
+    "main.css": "/static/css/main.5f361e03.chunk.css",
+    "main.js": "/static/js/main.fdef4767.chunk.js",
+    "main.js.map": "/static/js/main.fdef4767.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.de59d431.js",
+    "runtime-main.js.map": "/static/js/runtime-main.de59d431.js.map",
+    "static/js/2.de6767fb.chunk.js": "/static/js/2.de6767fb.chunk.js",
+    "static/js/2.de6767fb.chunk.js.map": "/static/js/2.de6767fb.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.fc3d2b8e77643085d0e6741ceba025f8.js": "/precache-manifest.fc3d2b8e77643085d0e6741ceba025f8.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.5f361e03.chunk.css.map": "/static/css/main.5f361e03.chunk.css.map",
+    "static/js/2.de6767fb.chunk.js.LICENSE.txt": "/static/js/2.de6767fb.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.50c4751e.js",
+    "static/js/runtime-main.de59d431.js",
     "static/js/2.de6767fb.chunk.js",
     "static/css/main.5f361e03.chunk.css",
-    "static/js/main.5f4e5e43.chunk.js"
+    "static/js/main.fdef4767.chunk.js"
   ]
 }
