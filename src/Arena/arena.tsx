@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Paper } from "@material-ui/core";
-import Input, { HighlightColor } from "./Input";
+import Input from "./Input";
+import { HighlightColors, ThemeColor } from "../Colors";
 
 // What a legend
 const durstenfeldShuffle = (array: string[]) => {
@@ -13,12 +14,12 @@ const durstenfeldShuffle = (array: string[]) => {
 
 interface WordProps {
   children: React.ReactNode;
-  highlight: HighlightColor;
+  highlight: ThemeColor;
 }
 
 const Word = ({ children, highlight }: WordProps) => {
   return (
-    <span style={{ padding: "10px", backgroundColor: highlight }}>
+    <span style={{ padding: "10px", backgroundColor: highlight.bg }}>
       {children}
     </span>
   );
@@ -27,15 +28,15 @@ const Word = ({ children, highlight }: WordProps) => {
 const WordHandler = () => {
   const [words, setWords] = useState<string[]>([]);
   const [highlighted, setHighlighted] = useState<number>(0);
-  const [wordHighlight, setWordHighlight] = useState<HighlightColor>(
-    HighlightColor.NONE
+  const [wordHighlight, setWordHighlight] = useState<ThemeColor>(
+    HighlightColors.NONE
   );
-  const [inputHighlight, setInputHighlight] = useState<HighlightColor>(
-    HighlightColor.NONE
+  const [inputHighlight, setInputHighlight] = useState<ThemeColor>(
+    HighlightColors.NONE
   );
 
   const clearInputHighLight = () => {
-    setInputHighlight(HighlightColor.NONE);
+    setInputHighlight(HighlightColors.NONE);
   };
 
   const compareWithWord = (entered: string) => {
@@ -54,7 +55,6 @@ const WordHandler = () => {
 
   useEffect(() => {
     getWords(setWords);
-    setWordHighlight(HighlightColor.GREAT);
   }, []);
 
   return (
@@ -76,7 +76,7 @@ const WordHandler = () => {
 interface WordDisplayProps {
   words: string[];
   highlightedIndex: number;
-  highlightColor: HighlightColor;
+  highlightColor: ThemeColor;
 }
 const WordDisplay = ({
   words,
@@ -91,7 +91,7 @@ const WordDisplay = ({
           <Word
             key={word}
             highlight={
-              highlightedIndex === index ? highlightColor : HighlightColor.NONE
+              highlightedIndex === index ? highlightColor : HighlightColors.NONE
             }
           >
             {word}
