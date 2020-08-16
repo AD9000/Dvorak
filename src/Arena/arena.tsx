@@ -1,26 +1,114 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Grid, Paper } from "@material-ui/core";
+import Input from "./Input";
+import { HighlightColors, ThemeColor } from "../Colors";
+import { AppContext, Word } from "../Context";
 
-// What a legend
-const durstenfeldShuffle = (array: string[]) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
+interface WordProps {
+  children: React.ReactNode;
+  highlight: ThemeColor;
+}
+
+const WordBox = ({ children, highlight }: WordProps) => {
+  return (
+    <span
+      style={{
+        padding: "10px",
+        backgroundColor: highlight.bg,
+        color: highlight.text,
+      }}
+    >
+      {children}
+    </span>
+  );
 };
 
-// imagine not using a hardcoded list of words
-// Jk, this is temporary
 const WordHandler = () => {
-  const [words, setWords] = useState<string[]>([]);
-  useEffect(() => {
-    fetch("/words.txt")
-      .then((res) => res.text())
-      .then((text) => setWords(text.split("\n")));
-  }, []);
+  const { words } = useContext(AppContext);
+  const [highlighted, setHighlighted] = useState<number>(0);
+  const [lastHighlighted, setLastHighlighted] = useState<number | null>(null);
+  // const [wordHighlight, setWordHighlight] = useState<ThemeColor>(
+  //   HighlightColors.NONE
+  // );
+  const [inputHighlight, setInputHighlight] = useState<ThemeColor>(
+    HighlightColors.NONE
+  );
 
-  return <p>{durstenfeldShuffle(words).slice(0, 100).join(" ")}</p>;
+  interface setWordHighlightProps {
+    index: number;
+    color: ThemeColor;
+  }
+  const clearInputHighLight = () => {
+    setInputHighlight(HighlightColors.NONE);
+  };
+
+  const setWordHighlight = ({ index, color }: setWordHighlightProps) => {
+    words[index].highlight = color;
+  };
+
+  const clearWordHighlight = () => {
+    words[highlighted].highlight = HighlightColors.NONE;
+  };
+
+  const finishWord = () => {
+    setLastHighlighted(highlighted);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawEntered = e.target.value;
+    const entered = rawEntered.trim();
+    // Compare entered stuff with currently highlighted word
+    if (!entered) {
+      clearInputHighLight();
+      return;
+    }
+
+    const currentWord = words[highlighted].word.trim();
+    console.log("'" + currentWord + "'", entered);
+    const isWordCorrect = currentWord === entered;
+    setWordHighlight({
+      index: highlighted,
+      color: isWordCorrect ? HighlightColors.GREAT : HighlightColors.BAD,
+    });
+
+    if (isWordCorrect && rawEntered[rawEntered.length - 1] === " ") {
+      finishWord();
+      setWordHighlight({ index: highlighted + 1, color: HighlightColors.DONE });
+      setHighlighted(highlighted + 1);
+      // Remove stuff from input
+      e.target.value = "";
+    }
+  };
+
+  return (
+    <>
+      <Paper style={{ margin: "3rem" }}>
+        <WordDisplay
+          words={words.slice(0, 100)}
+          highlightedIndex={highlighted}
+        />
+      </Paper>
+      <Paper>
+        <Input changeHandler={handleChange} highlight={inputHighlight} />
+      </Paper>
+    </>
+  );
+};
+
+interface WordDisplayProps {
+  words: Word[];
+  highlightedIndex: number;
+}
+const WordDisplay = ({ words, highlightedIndex }: WordDisplayProps) => {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", padding: "10px" }}>
+      {words.map((word) => (
+        <WordBox key={word.word} highlight={word.highlight}>
+          {word.word}
+        </WordBox>
+      ))}
+    </div>
+  );
 };
 
 const Arena = () => {
@@ -29,9 +117,7 @@ const Arena = () => {
       <Grid item container>
         <Grid item sm={1} />
         <Grid item sm={10}>
-          <Paper>
-            <WordHandler />
-          </Paper>
+          <WordHandler />
         </Grid>
         <Grid item sm={1} />
       </Grid>
