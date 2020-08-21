@@ -1,5 +1,5 @@
 export enum Color {
-  RED = "red",
+  RED = "#c41414",
   GREEN = "green",
   NONE = "inherit",
   WHITE = "white",

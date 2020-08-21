@@ -1,8 +1,9 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState, useRef } from "react";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { ThemeColor } from "../Colors";
+import { ThemeColor, HighlightColors } from "../Colors";
+import { AppContext, Word } from "../Context";
 
 const useStyles = makeStyles({
   root: {
@@ -15,24 +16,87 @@ const useStyles = makeStyles({
   },
 });
 
-interface InputProps {
-  changeHandler(e: ChangeEvent): void;
-  highlight: ThemeColor;
+interface handleWordUpdateProps {
+  updateWord: Function;
+  e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>;
+  currentIndex: number;
+  displayedWords: Word[];
+  nextWord: Function;
+  clearInput: Function;
 }
 
-const Input = ({ changeHandler }: InputProps) => {
+// Checking and updating highlights if needed
+const handleWordUpdate = ({
+  updateWord,
+  e,
+  currentIndex,
+  displayedWords,
+  nextWord,
+  clearInput,
+}: handleWordUpdateProps) => {
+  const entered = e.target.value;
+  const currentWord = displayedWords[currentIndex];
+  const isOk = currentWord.word.startsWith(entered);
+  const isDone = entered === currentWord.word + " ";
+  console.log(isDone, entered + " ", currentWord.word);
+
+  let updateColor;
+
+  if (isDone) {
+    updateColor = HighlightColors.DONE;
+  } else if (!entered) {
+    updateColor = HighlightColors.NONE;
+  } else {
+    updateColor = isOk ? HighlightColors.GREAT : HighlightColors.BAD;
+  }
+
+  const shouldUpdate = updateColor !== currentWord.highlight;
+
+  shouldUpdate && updateWord(currentIndex, updateColor);
+  if (isDone) {
+    clearInput();
+    nextWord();
+  }
+};
+
+const UserInput = () => {
+  const ref = useRef<HTMLDivElement>(null);
   const classes = useStyles();
+
+  const clearInput = () => {
+    if (!ref.current) {
+      return;
+    }
+    ref.current.getElementsByTagName("input")[0].value = "";
+  };
+
   return (
-    <TextField
-      onChange={changeHandler}
-      InputProps={{
-        classes: {
-          root: classes.root,
-          input: classes.textBox,
-        },
+    <AppContext.Consumer>
+      {({ displayedWords, currentWord, updateWord, nextWord }) => {
+        return (
+          <TextField
+            ref={ref}
+            onChange={(e) =>
+              handleWordUpdate({
+                updateWord,
+                e,
+                currentIndex: currentWord,
+                displayedWords,
+                nextWord,
+                clearInput,
+              })
+            }
+            InputProps={{
+              classes: {
+                root: classes.root,
+                input: classes.textBox,
+              },
+            }}
+          />
+        );
       }}
-    />
+    </AppContext.Consumer>
   );
 };
 
-export { Input as default };
+export { UserInput as default };

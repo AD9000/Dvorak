@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Arena from "./Arena/arena";
 import { Word, AppContext } from "./Context";
 import "./App.css";
-import { HighlightColors } from "./Colors";
+import { HighlightColors, ThemeColor } from "./Colors";
 
 // What a legend
 const durstenfeldShuffle = (array: string[]) => {
@@ -16,6 +16,8 @@ const durstenfeldShuffle = (array: string[]) => {
 
 const App = () => {
   const [words, setWords] = useState<Word[]>([]);
+  const [displayedWords, setDisplayedWords] = useState<Word[]>([]);
+  const [currentWord, setCurrentWord] = useState<number>(0);
 
   // imagine not using a hardcoded list of words
   // Jk, this is temporary
@@ -32,12 +34,42 @@ const App = () => {
       );
   };
 
+  // update the word at position
+  const updateWord = (index: number, updateColor: ThemeColor) => {
+    // console.log("updating word...", displayedWords[index]);
+    const updatedDisplay = [...displayedWords];
+    updatedDisplay[index] = {
+      ...updatedDisplay[index],
+      highlight: updateColor,
+    };
+    // console.log("updating to...", updatedDisplay[index]);
+    setDisplayedWords(updatedDisplay);
+  };
+
+  const nextWord = () => {
+    setCurrentWord(currentWord + 1);
+  };
+
   useEffect(() => {
     getWords(setWords);
   }, []);
 
+  useEffect(() => {
+    setDisplayedWords(words.slice(0, 100));
+  }, [words]);
+
   return (
-    <AppContext.Provider value={{ words: words, setWords: setWords }}>
+    <AppContext.Provider
+      value={{
+        words,
+        setWords,
+        displayedWords,
+        setDisplayedWords,
+        updateWord,
+        currentWord,
+        nextWord,
+      }}
+    >
       <Arena />
     </AppContext.Provider>
   );
