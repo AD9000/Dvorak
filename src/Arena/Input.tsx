@@ -38,7 +38,6 @@ const handleWordUpdate = ({
   const currentWord = displayedWords[currentIndex];
   const isOk = currentWord.word.startsWith(entered);
   const isDone = entered === currentWord.word + " ";
-  console.log(isDone, entered + " ", currentWord.word);
 
   let updateColor;
 

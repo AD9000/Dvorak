@@ -27,8 +27,6 @@ const Display = () => {
   return (
     <AppContext.Consumer>
       {({ displayedWords }) => {
-        console.log("displayed words are new");
-        console.log(displayedWords?.[0]);
         return (
           <div style={{ display: "flex", flexWrap: "wrap", padding: "10px" }}>
             {displayedWords.map((word) => (
