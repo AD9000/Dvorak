@@ -47,10 +47,10 @@ const Arena = () => {
       <Grid item container>
         <Grid item sm={1} />
         <Grid item sm={10}>
-          <Paper style={{ margin: "3rem" }}>
+          <Paper elevation={5} style={{ margin: "3rem" }}>
             <Display />
           </Paper>
-          <Paper>
+          <Paper elevation={3}>
             <UserInput />
           </Paper>
         </Grid>

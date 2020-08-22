@@ -1,8 +1,8 @@
-import React, { ChangeEvent, useState, useRef } from "react";
+import React, { ChangeEvent, useRef } from "react";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { ThemeColor, HighlightColors } from "../Colors";
+import { HighlightColors } from "../Colors";
 import { AppContext, Word } from "../Context";
 
 const useStyles = makeStyles({
@@ -10,7 +10,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexGrow: 1,
   },
-  textBox: {
+  input: {
     textDecoration: "none",
     fontSize: 50,
   },
@@ -23,6 +23,7 @@ interface handleWordUpdateProps {
   displayedWords: Word[];
   nextWord: Function;
   clearInput: Function;
+  setEntered: Function;
 }
 
 // Checking and updating highlights if needed
@@ -33,8 +34,10 @@ const handleWordUpdate = ({
   displayedWords,
   nextWord,
   clearInput,
+  setEntered,
 }: handleWordUpdateProps) => {
   const entered = e.target.value;
+  setEntered(entered);
   const currentWord = displayedWords[currentIndex];
   const isOk = currentWord.word.startsWith(entered);
   const isDone = entered === currentWord.word + " ";
@@ -71,10 +74,11 @@ const UserInput = () => {
 
   return (
     <AppContext.Consumer>
-      {({ displayedWords, currentWord, updateWord, nextWord }) => {
+      {({ displayedWords, currentWord, updateWord, nextWord, setEntered }) => {
         return (
           <TextField
             ref={ref}
+            fullWidth
             onChange={(e) =>
               handleWordUpdate({
                 updateWord,
@@ -83,12 +87,13 @@ const UserInput = () => {
                 displayedWords,
                 nextWord,
                 clearInput,
+                setEntered,
               })
             }
             InputProps={{
               classes: {
                 root: classes.root,
-                input: classes.textBox,
+                input: classes.input,
               },
             }}
           />

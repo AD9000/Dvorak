@@ -18,6 +18,7 @@ const App = () => {
   const [words, setWords] = useState<Word[]>([]);
   const [displayedWords, setDisplayedWords] = useState<Word[]>([]);
   const [currentWord, setCurrentWord] = useState<number>(0);
+  const [entered, setEntered] = useState<string>("");
 
   // imagine not using a hardcoded list of words
   // Jk, this is temporary
@@ -26,7 +27,7 @@ const App = () => {
       .then((res) => res.text())
       .then((text) =>
         setWords(
-          durstenfeldShuffle(text.split("\n")).map((word) => ({
+          durstenfeldShuffle(text.split(" ")).map((word) => ({
             word,
             highlight: HighlightColors.NONE,
           }))
@@ -36,13 +37,11 @@ const App = () => {
 
   // update the word at position
   const updateWord = (index: number, updateColor: ThemeColor) => {
-    // console.log("updating word...", displayedWords[index]);
     const updatedDisplay = [...displayedWords];
     updatedDisplay[index] = {
       ...updatedDisplay[index],
       highlight: updateColor,
     };
-    // console.log("updating to...", updatedDisplay[index]);
     setDisplayedWords(updatedDisplay);
   };
 
@@ -68,6 +67,8 @@ const App = () => {
         updateWord,
         currentWord,
         nextWord,
+        entered,
+        setEntered,
       }}
     >
       <Arena />

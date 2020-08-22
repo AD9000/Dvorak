@@ -14,6 +14,8 @@ interface WordsContext {
   updateWord: Function;
   currentWord: number;
   nextWord: Function;
+  entered: string;
+  setEntered: Function;
 }
 
 const AppContext = React.createContext<WordsContext>({
@@ -24,6 +26,8 @@ const AppContext = React.createContext<WordsContext>({
   updateWord: () => {},
   currentWord: 0,
   nextWord: () => {},
+  entered: "",
+  setEntered: () => {},
 });
 
 export { AppContext };
