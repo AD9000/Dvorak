@@ -1,25 +1,45 @@
 import React from "react";
 import { Grid, Paper } from "@material-ui/core";
 import UserInput from "./Input";
-import { ThemeColor } from "../Colors";
-import { AppContext } from "../Context";
+import { ThemeColor, HighlightColors } from "../Colors";
+import { AppContext, Word } from "../Context";
 
 interface WordProps {
-  children: React.ReactNode;
-  highlight: ThemeColor;
+  wordObj: Word;
+  index: number;
 }
 
-const WordBox = ({ children, highlight }: WordProps) => {
+const WordBox = ({ wordObj, index }: WordProps) => {
+  const { word, highlight } = wordObj;
   return (
-    <span
-      style={{
-        padding: "10px",
-        backgroundColor: highlight.bg,
-        color: highlight.text,
-      }}
-    >
-      {children}
-    </span>
+    <AppContext.Consumer>
+      {({ entered, currentWord }) => (
+        <div
+          style={{
+            padding: "10px",
+            background: currentWord > index ? highlight.bg : "inherit",
+          }}
+        >
+          {word.split("").map((letter, index) => (
+            <span
+              style={{
+                padding: "10px 0",
+                backgroundColor:
+                  index < entered.length
+                    ? highlight.bg
+                    : HighlightColors.NONE.bg,
+                color:
+                  index < entered.length
+                    ? highlight.text
+                    : HighlightColors.NONE.text,
+              }}
+            >
+              {letter}
+            </span>
+          ))}
+        </div>
+      )}
+    </AppContext.Consumer>
   );
 };
 
@@ -29,10 +49,8 @@ const Display = () => {
       {({ displayedWords }) => {
         return (
           <div style={{ display: "flex", flexWrap: "wrap", padding: "10px" }}>
-            {displayedWords.map((word) => (
-              <WordBox key={word.word} highlight={word.highlight}>
-                {word.word}
-              </WordBox>
+            {displayedWords.map((word, index) => (
+              <WordBox key={word.word} wordObj={word} index={index} />
             ))}
           </div>
         );
@@ -47,10 +65,10 @@ const Arena = () => {
       <Grid item container>
         <Grid item sm={1} />
         <Grid item sm={10}>
-          <Paper style={{ margin: "3rem" }}>
+          <Paper elevation={5} style={{ margin: "3rem" }}>
             <Display />
           </Paper>
-          <Paper>
+          <Paper elevation={3}>
             <UserInput />
           </Paper>
         </Grid>
