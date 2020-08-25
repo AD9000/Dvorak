@@ -85,10 +85,24 @@ const App = () => {
 
   useEffect(() => {
     setCharCount(getCharCount());
+    const pollCharCount = setInterval(() => {
+      setCharCount(getCharCount());
+    }, 2000);
+
+    return () => {
+      clearInterval(pollCharCount);
+    };
   }, [currentWord]);
 
   useEffect(() => {
     setWpm(getWPM());
+    const pollWPM = setInterval(() => {
+      setCharCount(getCharCount());
+    }, 2000);
+
+    return () => {
+      clearInterval(pollWPM);
+    };
   }, [charCount]);
 
   useEffect(() => {
