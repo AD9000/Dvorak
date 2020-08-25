@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef } from "react";
+import React, { ChangeEvent, useRef, useState, useContext } from "react";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -18,32 +18,28 @@ const useStyles = makeStyles({
 
 interface handleWordUpdateProps {
   updateWord: Function;
-  e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>;
+  entered: string;
   currentIndex: number;
   displayedWords: Word[];
   nextWord: Function;
   clearInput: Function;
-  setEntered: Function;
+  // setEntered: Function;
 }
 
 // Checking and updating highlights if needed
 const handleWordUpdate = ({
   updateWord,
-  e,
+  entered,
   currentIndex,
   displayedWords,
   nextWord,
   clearInput,
-  setEntered,
 }: handleWordUpdateProps) => {
-  const entered = e.target.value;
-  setEntered(entered);
   const currentWord = displayedWords[currentIndex];
   const isOk = currentWord.word.startsWith(entered);
   const isDone = entered === currentWord.word + " ";
 
   let updateColor;
-
   if (isDone) {
     updateColor = HighlightColors.DONE;
   } else if (!entered) {
@@ -63,7 +59,17 @@ const handleWordUpdate = ({
 
 const UserInput = () => {
   const ref = useRef<HTMLDivElement>(null);
+  const [rawEntered, setRawEntered] = useState<string>("");
   const classes = useStyles();
+
+  const {
+    updateWord,
+    entered,
+    setEntered,
+    currentWord,
+    displayedWords,
+    nextWord,
+  } = useContext(AppContext);
 
   const clearInput = () => {
     if (!ref.current) {
@@ -72,34 +78,58 @@ const UserInput = () => {
     ref.current.getElementsByTagName("input")[0].value = "";
   };
 
+  // const handleRawUpdate = (value: string) => {
+  //   // Doesn't exist. Clear
+  //   if (!value) {
+  //     setRawEntered("");
+  //     return;
+  //   }
+
+  //   // pressed a backspace
+  //   if (value.length < rawEntered.length) {
+  //     setRawEntered(rawEntered.slice(0, value.length));
+  //     return;
+  //   }
+
+  //   // Ok, get the last character
+  //   let newValue = rawEntered + value.charAt(value.length - 1);
+  //   setRawEntered(newValue);
+  // };
+
+  const handleRawUpdate = (value: string) => {
+    console.log(value);
+    setRawEntered(value);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    handleRawUpdate(e.target.value);
+    // handleWordUpdate({updateWord, entered: rawEntered});
+  };
+
   return (
-    <AppContext.Consumer>
-      {({ displayedWords, currentWord, updateWord, nextWord, setEntered }) => {
-        return (
-          <TextField
-            ref={ref}
-            fullWidth
-            onChange={(e) =>
-              handleWordUpdate({
-                updateWord,
-                e,
-                currentIndex: currentWord,
-                displayedWords,
-                nextWord,
-                clearInput,
-                setEntered,
-              })
-            }
-            InputProps={{
-              classes: {
-                root: classes.root,
-                input: classes.input,
-              },
-            }}
-          />
-        );
+    <TextField
+      value={rawEntered}
+      ref={ref}
+      fullWidth
+      onChange={handleChange}
+      // onChange={(e) =>
+      //   handleWordUpdate({
+      //     updateWord,
+      //     e,
+      //     currentIndex: currentWord,
+      //     displayedWords,
+      //     nextWord,
+      //     clearInput,
+      //     setEntered,
+      //   })
+      // }
+      InputProps={{
+        classes: {
+          root: classes.root,
+          input: classes.input,
+        },
       }}
-    </AppContext.Consumer>
+    />
   );
 };
 
