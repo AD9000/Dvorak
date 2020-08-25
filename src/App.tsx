@@ -19,6 +19,9 @@ const App = () => {
   const [displayedWords, setDisplayedWords] = useState<Word[]>([]);
   const [currentWord, setCurrentWord] = useState<number>(0);
   const [entered, setEntered] = useState<string>("");
+  const [wpm, setWpm] = useState<number>(0);
+  const [timer, setTimer] = useState<number>(0);
+  const [charCount, setCharCount] = useState<number>(0);
 
   // imagine not using a hardcoded list of words
   // Jk, this is temporary
@@ -45,9 +48,48 @@ const App = () => {
     setDisplayedWords(updatedDisplay);
   };
 
+  const getWPM = () => {
+    // if timer is not started, ignore
+    if (!timer) {
+      return 0;
+    }
+
+    // Calculate wpm based on ((words completed)/(time elapsed))
+    const charsCompleted = charCount;
+    const elapsedSeconds = (Date.now() - timer) / 1000;
+
+    // a word is 5 characters
+    return Math.round((charsCompleted / (5 * elapsedSeconds)) * 60);
+  };
+
+  const getCharCount = () => {
+    if (currentWord <= 0) {
+      return 0;
+    }
+    return charCount + words[currentWord - 1].word.length;
+  };
+
+  const startTimer = () => {
+    // no need for an active timer
+    if (timer) {
+      return;
+    } else {
+      // timer is set to the current time
+      setTimer(Date.now());
+    }
+  };
+
   const nextWord = () => {
     setCurrentWord(currentWord + 1);
   };
+
+  useEffect(() => {
+    setCharCount(getCharCount());
+  }, [currentWord]);
+
+  useEffect(() => {
+    setWpm(getWPM());
+  }, [charCount]);
 
   useEffect(() => {
     getWords(setWords);
@@ -69,6 +111,8 @@ const App = () => {
         nextWord,
         entered,
         setEntered,
+        wpm,
+        startTimer,
       }}
     >
       <Arena />

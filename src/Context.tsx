@@ -16,6 +16,8 @@ interface WordsContext {
   nextWord: Function;
   entered: string;
   setEntered: Function;
+  wpm: number;
+  startTimer: Function;
 }
 
 const AppContext = React.createContext<WordsContext>({
@@ -28,6 +30,8 @@ const AppContext = React.createContext<WordsContext>({
   nextWord: () => {},
   entered: "",
   setEntered: () => {},
+  wpm: 0,
+  startTimer: () => {},
 });
 
 export { AppContext };

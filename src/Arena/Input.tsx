@@ -24,6 +24,7 @@ interface handleWordUpdateProps {
   nextWord: Function;
   clearInput: Function;
   setEntered: Function;
+  startTimer: Function;
 }
 
 // Checking and updating highlights if needed
@@ -35,9 +36,16 @@ const handleWordUpdate = ({
   nextWord,
   clearInput,
   setEntered,
+  startTimer,
 }: handleWordUpdateProps) => {
   const entered = e.target.value;
   setEntered(entered);
+
+  // start timer
+  if (currentIndex === 0 && entered) {
+    startTimer();
+  }
+
   const currentWord = displayedWords[currentIndex];
   const isOk = currentWord.word.startsWith(entered);
   const isDone = entered === currentWord.word + " ";
@@ -74,7 +82,14 @@ const UserInput = () => {
 
   return (
     <AppContext.Consumer>
-      {({ displayedWords, currentWord, updateWord, nextWord, setEntered }) => {
+      {({
+        displayedWords,
+        currentWord,
+        updateWord,
+        nextWord,
+        setEntered,
+        startTimer,
+      }) => {
         return (
           <TextField
             ref={ref}
@@ -88,6 +103,7 @@ const UserInput = () => {
                 nextWord,
                 clearInput,
                 setEntered,
+                startTimer,
               })
             }
             InputProps={{
