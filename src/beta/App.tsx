@@ -4,6 +4,13 @@ import Arena from "./Arena/arena";
 import { Word, AppContext } from "./Context";
 import "./App.css";
 import { HighlightColors, ThemeColor } from "./Colors";
+import {
+  makeStyles,
+  Theme,
+  createStyles,
+  colors,
+  Typography,
+} from "@material-ui/core";
 
 // What a legend
 const durstenfeldShuffle = (array: string[]) => {
@@ -14,7 +21,7 @@ const durstenfeldShuffle = (array: string[]) => {
   return array;
 };
 
-const App = () => {
+const BetaApp = () => {
   const [words, setWords] = useState<Word[]>([]);
   const [displayedWords, setDisplayedWords] = useState<Word[]>([]);
   const [currentWord, setCurrentWord] = useState<number>(0);
@@ -114,24 +121,59 @@ const App = () => {
   }, [words]);
 
   return (
-    <AppContext.Provider
-      value={{
-        words,
-        setWords,
-        displayedWords,
-        setDisplayedWords,
-        updateWord,
-        currentWord,
-        nextWord,
-        entered,
-        setEntered,
-        wpm,
-        startTimer,
-      }}
-    >
-      <Arena />
-    </AppContext.Provider>
+    <>
+      <Warning />
+      <AppContext.Provider
+        value={{
+          words,
+          setWords,
+          displayedWords,
+          setDisplayedWords,
+          updateWord,
+          currentWord,
+          nextWord,
+          entered,
+          setEntered,
+          wpm,
+          startTimer,
+        }}
+      >
+        <Wrapper>
+          <Arena />
+        </Wrapper>
+      </AppContext.Provider>
+    </>
   );
 };
 
-export default App;
+const Warning = () => {
+  const classes = useStyles();
+  return (
+    <Typography variant="h6" className={classes.text}>
+      This is the beta site, here for fun. The features here may or may not be
+      ported over to the main one :)
+    </Typography>
+  );
+};
+
+const useStyles = makeStyles((theme: Theme) => {
+  return createStyles({
+    root: {
+      display: "flex",
+      flexGrow: 1,
+      backgroundColor: theme.palette.grey[800],
+    },
+    text: {
+      textAlign: "center",
+      backgroundColor: theme.palette.grey[800],
+      color: theme.palette.common.white,
+    },
+  });
+});
+
+const Wrapper: React.FC = ({ children }) => {
+  const classes = useStyles();
+  return <div className={classes.root}>{children}</div>;
+};
+
+export default BetaApp;
