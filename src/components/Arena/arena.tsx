@@ -1,38 +1,73 @@
 import React, { useContext } from "react";
 import { Grid, Paper, Typography } from "@material-ui/core";
 import UserInput from "./Input";
-import { ThemeColor } from "../Colors";
+import { HighlightColors, ThemeColor } from "../Colors";
 import { AppContext } from "../Context";
 
 interface WordProps {
-  children: React.ReactNode;
   highlight: ThemeColor;
+  index: number;
+  word: string;
+  currentWord: boolean;
 }
 
-const WordBox = ({ children, highlight }: WordProps) => {
+const WordBox = ({ highlight, index, word, currentWord }: WordProps) => {
   return (
     <span
       style={{
         padding: "10px",
-        backgroundColor: highlight.bg,
-        color: highlight.text,
+        fontSize: 25,
+        fontWeight: 500,
+        textDecoration: currentWord ? "underline" : "none",
       }}
     >
-      {children}
+      <span
+        style={{
+          // backgroundColor: highlight.bg,
+          color: highlight.bg,
+        }}
+      >
+        {word.slice(0, index)}
+      </span>
+      <span
+        style={{
+          color: HighlightColors.NONE.bg,
+        }}
+      >
+        {word.slice(index, word.length)}
+      </span>
     </span>
   );
+};
+
+interface compareProps {
+  entered: string;
+  word: string;
+}
+
+const compare = ({ entered, word }: compareProps) => {
+  for (let i = 0; i < word.length; i++) {
+    if (i >= entered.length || entered[i] !== word[i]) {
+      return i;
+    }
+  }
+  return word.length;
 };
 
 const Display = () => {
   return (
     <AppContext.Consumer>
-      {({ displayedWords }) => {
+      {({ displayedWords, entered, currentWord }) => {
         return (
           <div style={{ display: "flex", flexWrap: "wrap", padding: "10px" }}>
-            {displayedWords.map((word) => (
-              <WordBox key={word.word} highlight={word.highlight}>
-                {word.word}
-              </WordBox>
+            {displayedWords.map((word, i) => (
+              <WordBox
+                key={word.word}
+                highlight={word.highlight}
+                index={i === currentWord ? entered.length : word.word.length}
+                word={word.word}
+                currentWord={i === currentWord}
+              />
             ))}
           </div>
         );
@@ -70,27 +105,31 @@ const Arena = () => {
       <Grid item container>
         <Grid item xs={1} />
         <Grid item container xs={10}>
-          <Grid item xs={1} />
-          <Grid item xs={10}>
-            <Paper elevation={5} style={{ margin: "1.5rem" }}>
-              <Display />
-            </Paper>
+          <Grid item container style={{ justifyContent: "center" }}>
+            <Grid item xs={10}>
+              <Paper elevation={5} style={{ margin: "1.5rem" }}>
+                <Display />
+              </Paper>
+            </Grid>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            style={{ display: "flex", justifyContent: "center" }}
-          >
-            <Paper
-              elevation={3}
-              style={{
-                margin: "1rem 2rem",
-                display: "flex",
-                flexGrow: 1,
-              }}
+
+          <Grid item container style={{ justifyContent: "center" }}>
+            <Grid
+              item
+              xs={10}
+              style={{ display: "flex", justifyContent: "center" }}
             >
-              <UserInput />
-            </Paper>
+              <Paper
+                elevation={3}
+                style={{
+                  margin: "1rem 1.5rem",
+                  display: "flex",
+                  flexGrow: 1,
+                }}
+              >
+                <UserInput />
+              </Paper>
+            </Grid>
           </Grid>
         </Grid>
         <Grid item sm={1} />

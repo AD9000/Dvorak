@@ -4,7 +4,9 @@ export enum Color {
   NONE = "inherit",
   WHITE = "white",
   BLACK = "black",
-  LIGHT_GREY = "lightgrey",
+  LIGHT_GREY = "#c2c2c2",
+  DARK_GREY = "darkgray",
+  TEST = "#626262",
 }
 
 export interface ThemeColor {
@@ -29,15 +31,15 @@ export const HighlightColors: HighlightColor = {
     text: Color.WHITE,
   },
   GREAT: {
-    bg: Color.GREEN,
+    bg: Color.TEST,
     text: Color.WHITE,
   },
   NONE: {
-    bg: Color.NONE,
+    bg: Color.LIGHT_GREY,
     text: Color.BLACK,
   },
   DONE: {
-    bg: Color.LIGHT_GREY,
+    bg: Color.GREEN,
     text: Color.BLACK,
   },
 };

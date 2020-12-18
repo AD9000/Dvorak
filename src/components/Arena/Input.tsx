@@ -13,6 +13,7 @@ const useStyles = makeStyles({
   input: {
     textDecoration: "none",
     fontSize: 50,
+    textAlign: "center",
   },
 });
 
