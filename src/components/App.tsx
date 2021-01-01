@@ -6,6 +6,7 @@ import "./App.css";
 import { HighlightColors, ThemeColor } from "./Colors";
 import { makeStyles, Theme, createStyles, colors } from "@material-ui/core";
 import { WORD_COUNT } from "./constants";
+import { track } from "./analytics";
 
 // What a legend
 const durstenfeldShuffle = (array: string[]) => {
@@ -110,6 +111,8 @@ const App = () => {
     setCharCount(getCharCount());
     setTimeout(tick, 2000);
   }, [time]);
+
+  useEffect(track);
 
   useEffect(() => {
     if (started) {
