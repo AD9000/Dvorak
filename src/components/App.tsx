@@ -5,6 +5,7 @@ import { Word, AppContext } from "./Context";
 import "./App.css";
 import { HighlightColors, ThemeColor } from "./Colors";
 import { makeStyles, Theme, createStyles, colors } from "@material-ui/core";
+import { WORD_COUNT } from "./constants";
 
 // What a legend
 const durstenfeldShuffle = (array: string[]) => {
@@ -23,6 +24,8 @@ const App = () => {
   const [wpm, setWpm] = useState<number>(0);
   const [timer, setTimer] = useState<number>(0);
   const [charCount, setCharCount] = useState<number>(0);
+  const [started, setStarted] = useState<boolean>(false);
+  const [time, setTime] = useState<number>(-1);
 
   // imagine not using a hardcoded list of words
   // Jk, this is temporary
@@ -57,26 +60,37 @@ const App = () => {
 
     // Calculate wpm based on ((words completed)/(time elapsed))
     const charsCompleted = charCount;
-    const elapsedSeconds = (Date.now() - timer) / 1000;
+    const elapsedSeconds = Math.max((Date.now() - timer) / 1000, 1);
 
     // a word is 5 characters
     return Math.round((charsCompleted / (5 * elapsedSeconds)) * 60);
   };
 
   const getCharCount = () => {
-    if (currentWord <= 0) {
-      return 0;
+    if (currentWord === 0) {
+      return entered.length;
     }
     return charCount + words[currentWord - 1].word.length;
   };
 
   const startTimer = () => {
     // no need for an active timer
-    if (timer) {
+    if (started) {
       return;
     } else {
       // timer is set to the current time
-      setTimer(Date.now());
+      setTimeout(() => {
+        setTimer(Date.now());
+        setStarted(true);
+      }, 1000);
+    }
+  };
+
+  const stopTimer = () => {
+    if (!started) {
+      return;
+    } else {
+      setStarted(false);
     }
   };
 
@@ -84,34 +98,34 @@ const App = () => {
     setCurrentWord(currentWord + 1);
   };
 
+  const tick = () => {
+    if (time > 100) {
+      setTime(0);
+    } else {
+      setTime(time + 1);
+    }
+  };
+
   useEffect(() => {
     setCharCount(getCharCount());
-    const pollCharCount = setInterval(() => {
-      setCharCount(getCharCount());
-    }, 2000);
-
-    return () => {
-      clearInterval(pollCharCount);
-    };
-  }, [currentWord]);
+    setTimeout(tick, 2000);
+  }, [time]);
 
   useEffect(() => {
-    setWpm(getWPM());
-    const pollWPM = setInterval(() => {
-      setCharCount(getCharCount());
-    }, 2000);
-
-    return () => {
-      clearInterval(pollWPM);
-    };
-  }, [charCount]);
+    if (started) {
+      setWpm(getWPM());
+      if (time === -1) {
+        tick();
+      }
+    }
+  }, [charCount, started]);
 
   useEffect(() => {
     getWords(setWords);
   }, []);
 
   useEffect(() => {
-    setDisplayedWords(words.slice(0, 100));
+    setDisplayedWords(words.slice(0, WORD_COUNT));
   }, [words]);
 
   return (
@@ -128,6 +142,9 @@ const App = () => {
         setEntered,
         wpm,
         startTimer,
+        stopTimer,
+        started,
+        setStarted,
       }}
     >
       <Wrapper>

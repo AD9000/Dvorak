@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Grid, Paper, Typography } from "@material-ui/core";
+import { Box, Grid, Paper, Typography, Button } from "@material-ui/core";
 import UserInput from "./Input";
 import { HighlightColors, ThemeColor } from "../Colors";
 import { AppContext } from "../Context";
@@ -55,24 +55,19 @@ const compare = ({ entered, word }: compareProps) => {
 };
 
 const Display = () => {
+  const { displayedWords, entered, currentWord } = useContext(AppContext);
   return (
-    <AppContext.Consumer>
-      {({ displayedWords, entered, currentWord }) => {
-        return (
-          <div style={{ display: "flex", flexWrap: "wrap", padding: "10px" }}>
-            {displayedWords.map((word, i) => (
-              <WordBox
-                key={word.word}
-                highlight={word.highlight}
-                index={i === currentWord ? entered.length : word.word.length}
-                word={word.word}
-                currentWord={i === currentWord}
-              />
-            ))}
-          </div>
-        );
-      }}
-    </AppContext.Consumer>
+    <div style={{ display: "flex", flexWrap: "wrap", padding: "10px" }}>
+      {displayedWords.map((word, i) => (
+        <WordBox
+          key={word.word}
+          highlight={word.highlight}
+          index={i === currentWord ? entered.length : word.word.length}
+          word={word.word}
+          currentWord={i === currentWord}
+        />
+      ))}
+    </div>
   );
 };
 
@@ -98,7 +93,40 @@ const DisplayBar = () => {
   );
 };
 
+const startPractice = (
+  e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  setStarted: Function,
+  startTimer: Function
+) => {
+  e.preventDefault();
+  setStarted(true);
+
+  setTimeout(() => startTimer(), 1000);
+};
+
+const Starter = () => {
+  const { setStarted, startTimer } = useContext(AppContext);
+  return (
+    <Box
+      style={{
+        display: "flex",
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+      }}
+    >
+      <Typography variant="h1">Start</Typography>
+      <Button onClick={(e) => startPractice(e, setStarted, startTimer)}>
+        Yeet
+      </Button>
+    </Box>
+  );
+};
+
 const Arena = () => {
+  const { started } = useContext(AppContext);
+
   return (
     <Grid container direction="column">
       <DisplayBar />
@@ -107,8 +135,16 @@ const Arena = () => {
         <Grid item container xs={10}>
           <Grid item container style={{ justifyContent: "center" }}>
             <Grid item xs={10}>
-              <Paper elevation={5} style={{ margin: "1.5rem" }}>
-                <Display />
+              <Paper
+                elevation={5}
+                style={{
+                  margin: "1.5rem",
+                  display: "flex",
+                  flexGrow: 1,
+                  minHeight: 400,
+                }}
+              >
+                {started ? <Display /> : <Starter />}
               </Paper>
             </Grid>
           </Grid>

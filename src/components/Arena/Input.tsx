@@ -1,9 +1,10 @@
-import React, { ChangeEvent, useRef } from "react";
+import React, { ChangeEvent, useContext, useRef } from "react";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { HighlightColors } from "../Colors";
 import { AppContext, Word } from "../Context";
+import { WORD_COUNT } from "../constants";
 
 const useStyles = makeStyles({
   root: {
@@ -26,6 +27,7 @@ interface handleWordUpdateProps {
   clearInput: Function;
   setEntered: Function;
   startTimer: Function;
+  stopTimer: Function;
 }
 
 // Checking and updating highlights if needed
@@ -38,6 +40,7 @@ const handleWordUpdate = ({
   clearInput,
   setEntered,
   startTimer,
+  stopTimer,
 }: handleWordUpdateProps) => {
   const entered = e.target.value;
   setEntered(entered);
@@ -45,6 +48,10 @@ const handleWordUpdate = ({
   // start timer
   if (currentIndex === 0 && entered) {
     startTimer();
+  }
+
+  if (currentIndex >= WORD_COUNT) {
+    return;
   }
 
   const currentWord = displayedWords[currentIndex];
@@ -68,11 +75,25 @@ const handleWordUpdate = ({
     clearInput();
     nextWord();
   }
+
+  if (currentIndex >= 99) {
+    stopTimer();
+  }
 };
 
 const UserInput = () => {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLInputElement>(null);
   const classes = useStyles();
+
+  const {
+    displayedWords,
+    currentWord,
+    updateWord,
+    nextWord,
+    setEntered,
+    startTimer,
+    stopTimer,
+  } = useContext(AppContext);
 
   const clearInput = () => {
     if (!ref.current) {
@@ -82,41 +103,31 @@ const UserInput = () => {
   };
 
   return (
-    <AppContext.Consumer>
-      {({
-        displayedWords,
-        currentWord,
-        updateWord,
-        nextWord,
-        setEntered,
-        startTimer,
-      }) => {
-        return (
-          <TextField
-            ref={ref}
-            fullWidth
-            onChange={(e) =>
-              handleWordUpdate({
-                updateWord,
-                e,
-                currentIndex: currentWord,
-                displayedWords,
-                nextWord,
-                clearInput,
-                setEntered,
-                startTimer,
-              })
-            }
-            InputProps={{
-              classes: {
-                root: classes.root,
-                input: classes.input,
-              },
-            }}
-          />
-        );
+    <TextField
+      ref={ref}
+      inputRef={(input) => input && input.focus()}
+      autoFocus
+      fullWidth
+      onChange={(e) =>
+        handleWordUpdate({
+          updateWord,
+          e,
+          currentIndex: currentWord,
+          displayedWords,
+          nextWord,
+          clearInput,
+          setEntered,
+          startTimer,
+          stopTimer,
+        })
+      }
+      InputProps={{
+        classes: {
+          root: classes.root,
+          input: classes.input,
+        },
       }}
-    </AppContext.Consumer>
+    />
   );
 };
 
