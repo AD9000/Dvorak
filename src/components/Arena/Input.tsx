@@ -28,6 +28,7 @@ interface handleWordUpdateProps {
   setEntered: Function;
   startTimer: Function;
   stopTimer: Function;
+  started: boolean;
 }
 
 // Checking and updating highlights if needed
@@ -41,14 +42,18 @@ const handleWordUpdate = ({
   setEntered,
   startTimer,
   stopTimer,
+  started,
 }: handleWordUpdateProps) => {
   const entered = e.target.value;
   setEntered(entered);
 
+  //   console.log("updating word...", started);
+
   // start timer
-  if (currentIndex === 0 && entered) {
-    startTimer();
-  }
+  // if (started && currentIndex === 0 && entered) {
+  //   console.log("starting timer...");
+  //   startTimer();
+  // }
 
   if (currentIndex >= WORD_COUNT) {
     return;
@@ -93,6 +98,7 @@ const UserInput = () => {
     setEntered,
     startTimer,
     stopTimer,
+    started,
   } = useContext(AppContext);
 
   const clearInput = () => {
@@ -119,6 +125,7 @@ const UserInput = () => {
           setEntered,
           startTimer,
           stopTimer,
+          started,
         })
       }
       InputProps={{

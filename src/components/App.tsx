@@ -22,11 +22,14 @@ const App = () => {
   const [displayedWords, setDisplayedWords] = useState<Word[]>([]);
   const [currentWord, setCurrentWord] = useState<number>(0);
   const [entered, setEntered] = useState<string>("");
+  const [lastEntered, setLastEntered] = useState<string>("");
   const [wpm, setWpm] = useState<number>(0);
   const [timer, setTimer] = useState<number>(0);
   const [charCount, setCharCount] = useState<number>(0);
   const [started, setStarted] = useState<boolean>(false);
   const [time, setTime] = useState<number>(-1);
+  const [lastWord, setLastWord] = useState<number>(-1);
+  const [currentSum, setCurrentSum] = useState<number>(0);
 
   // imagine not using a hardcoded list of words
   // Jk, this is temporary
@@ -53,37 +56,14 @@ const App = () => {
     setDisplayedWords(updatedDisplay);
   };
 
-  const getWPM = () => {
-    // if timer is not started, ignore
-    if (!timer) {
-      return 0;
-    }
-
-    // Calculate wpm based on ((words completed)/(time elapsed))
-    const charsCompleted = charCount;
-    const elapsedSeconds = Math.max((Date.now() - timer) / 1000, 1);
-
-    // a word is 5 characters
-    return Math.round((charsCompleted / (5 * elapsedSeconds)) * 60);
-  };
-
-  const getCharCount = () => {
-    if (currentWord === 0) {
-      return entered.length;
-    }
-    return charCount + words[currentWord - 1].word.length;
-  };
-
   const startTimer = () => {
     // no need for an active timer
     if (started) {
       return;
     } else {
       // timer is set to the current time
-      setTimeout(() => {
-        setTimer(Date.now());
-        setStarted(true);
-      }, 1000);
+      setTimer(Date.now());
+      setStarted(true);
     }
   };
 
@@ -98,30 +78,7 @@ const App = () => {
   const nextWord = () => {
     setCurrentWord(currentWord + 1);
   };
-
-  const tick = () => {
-    if (time > 100) {
-      setTime(0);
-    } else {
-      setTime(time + 1);
-    }
-  };
-
-  useEffect(() => {
-    setCharCount(getCharCount());
-    setTimeout(tick, 2000);
-  }, [time]);
-
   useEffect(track);
-
-  useEffect(() => {
-    if (started) {
-      setWpm(getWPM());
-      if (time === -1) {
-        tick();
-      }
-    }
-  }, [charCount, started]);
 
   useEffect(() => {
     getWords(setWords);
@@ -130,6 +87,12 @@ const App = () => {
   useEffect(() => {
     setDisplayedWords(words.slice(0, WORD_COUNT));
   }, [words]);
+
+  useEffect(() => {
+    if (started) {
+      setCurrentSum(currentSum + words[currentWord - 1].word.length);
+    }
+  }, [currentWord]);
 
   return (
     <AppContext.Provider
@@ -143,11 +106,23 @@ const App = () => {
         nextWord,
         entered,
         setEntered,
+        lastEntered,
+        setLastEntered,
         wpm,
+        setWpm,
         startTimer,
         stopTimer,
         started,
         setStarted,
+        time,
+        setTime,
+        charCount,
+        setCharCount,
+        timer,
+        lastWord,
+        setLastWord,
+        currentSum,
+        setCurrentSum,
       }}
     >
       <Wrapper>
