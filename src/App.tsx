@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-import Arena from "./Arena/arena";
-import { Word, AppContext } from "./Context";
+import Arena from "./components/Arena/arena";
+import { Word, AppContext } from "./components/Context";
 import "./App.css";
-import { HighlightColors, ThemeColor } from "./Colors";
+import { HighlightColors, ThemeColor } from "./components/Colors";
 import { makeStyles, Theme, createStyles, colors } from "@material-ui/core";
-import { WORD_COUNT } from "./constants";
-import { track } from "./analytics";
+import { WORD_COUNT } from "./components/constants";
+import { track } from "./components/analytics";
 
 // What a legend
 const durstenfeldShuffle = (array: string[]) => {
@@ -135,8 +135,9 @@ const App = () => {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      height: "100%",
       display: "flex",
-      flexGrow: 1,
+      flex: 1,
       backgroundColor: colors.brown[200],
     },
   })
