@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Grid, Paper, Typography, Button } from "@material-ui/core";
 import UserInput from "./Input";
 import { HighlightColors, ThemeColor } from "../Colors";
-import { AppContext } from "../Context";
-import { WORD_SIZE } from "../constants";
+import { AppContext, ArenaContext } from "../Context";
+import { WORD_SIZE } from "../Constants";
 import { throttle } from "lodash";
 
 interface WordProps {
@@ -73,82 +73,77 @@ const Display = () => {
   );
 };
 
-const WPM = () => {
-  const {
-    entered,
-    lastEntered,
-    setLastEntered,
-    charCount,
-    setCharCount,
-    currentWord,
-    lastWord,
-    setLastWord,
-    words,
-    wpm,
-    setWpm,
-    time,
-    setTime,
-    timer,
-    started,
-    currentSum,
-  } = useContext(AppContext);
+// const WPM = () => {
+//   const {
+//     entered,
+//     lastEntered,
+//     setLastEntered,
+//     charCount,
+//     setCharCount,
+//     currentWord,
+//     lastWord,
+//     setLastWord,
+//     words,
+//     wpm,
+//     setWpm,
+//     time,
+//     setTime,
+//     timer,
+//     currentSum,
+//   } = useContext(AppContext);
 
-  const getCharCount = () => {
-    if (lastWord === currentWord) {
-      if (entered === lastEntered) {
-        return charCount;
-      } else {
-        return currentSum + entered.length;
-      }
-    }
-    setLastEntered(entered);
-    setLastWord(currentWord);
-    if (currentWord === 0) {
-      return entered.length;
-    }
-    return currentSum + words[currentWord - 1].word.length;
-  };
+//   const getCharCount = () => {
+//     if (lastWord === currentWord) {
+//       if (entered === lastEntered) {
+//         return charCount;
+//       } else {
+//         return currentSum + entered.length;
+//       }
+//     }
+//     setLastEntered(entered);
+//     setLastWord(currentWord);
+//     if (currentWord === 0) {
+//       return entered.length;
+//     }
+//     return currentSum + words[currentWord - 1].word.length;
+//   };
 
-  const getWPM = () => {
-    // if timer is not started, ignore
-    if (!timer) {
-      return 0;
-    }
+//   const getWPM = () => {
+//     // if timer is not started, ignore
+//     if (!timer) {
+//       return 0;
+//     }
 
-    // Calculate wpm based on ((words completed)/(time elapsed))
-    const charsCompleted = charCount;
-    const elapsedSeconds = (Date.now() - timer) / 1000;
+//     // Calculate wpm based on ((words completed)/(time elapsed))
+//     const charsCompleted = charCount;
+//     const elapsedSeconds = (Date.now() - timer) / 1000;
 
-    // a word is 5 characters
-    return Math.round((charsCompleted / (WORD_SIZE * elapsedSeconds)) * 60);
-  };
+//     // a word is 5 characters
+//     return Math.round((charsCompleted / (WORD_SIZE * elapsedSeconds)) * 60);
+//   };
 
-  const tick = () => {
-    if (time > 100) {
-      setTime(0);
-    } else {
-      setTime(time + 1);
-    }
-  };
+//   const tick = () => {
+//     if (time > 100) {
+//       setTime(0);
+//     } else {
+//       setTime(time + 1);
+//     }
+//   };
 
-  useEffect(() => {
-    // console.log("ok");
-    throttle(() => {
-      //   console.log("running");
-      setCharCount(getCharCount());
-    }, 1000)();
-    setTimeout(tick, 1200);
-  }, [time]);
+//   useEffect(() => {
+//     // console.log("ok");
+//     throttle(() => {
+//       //   console.log("running");
+//       setCharCount(getCharCount());
+//     }, 1000)();
+//     setTimeout(tick, 1200);
+//   }, [time]);
 
-  useEffect(() => {
-    if (started) {
-      setWpm(getWPM());
-      if (time === -1) {
-        tick();
-      }
-    }
-  }, [started, time]);
+//   return <WPMDisplay wpm={wpm} />;
+// };
 
+const WPMDisplay = () => {
+  const { wpm } = useContext(AppContext);
   return (
     <Paper elevation={3}>
       <Typography variant="h5" style={{ padding: "1rem" }}>
@@ -156,6 +151,23 @@ const WPM = () => {
       </Typography>
     </Paper>
   );
+};
+
+const WPM = () => {
+  // measure WPM every 1 second
+  const { time, currentWord, charCount, setWpm } = useContext(AppContext);
+
+  useEffect(() => {
+    if (time < 1) {
+      return;
+    }
+    console.log("oh would you look at the index:", charCount);
+    const timeMins = time / 60;
+    const wpm = Math.ceil((charCount + 1) / (WORD_SIZE * timeMins));
+    setWpm(wpm);
+  }, [time]);
+
+  return <WPMDisplay />;
 };
 
 const DisplayBar = () => {
@@ -169,105 +181,66 @@ const DisplayBar = () => {
   );
 };
 
-const startPractice = (
-  e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  setStarted: Function,
-  startTimer: Function
-) => {
-  e.preventDefault();
-  setStarted(true);
+const Arena = () => {
+  const [typing, setTyping] = useState(false);
+  const { entered, time } = useContext(AppContext);
+  useEffect(() => {
+    console.log("entered", entered);
+    console.log("time", time);
+  });
 
-  // haven't found a good way to do this yet
-  setTimeout(() => startTimer(), 1000);
-};
-
-const Starter = () => {
-  const { setStarted, startTimer } = useContext(AppContext);
   return (
-    <Grid
-      item
-      container
-      style={{
-        display: "flex",
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
+    <ArenaContext.Provider
+      value={{
+        typing,
+        setTyping,
       }}
     >
-      <Paper
-        style={{
-          minHeight: 400,
-          minWidth: 400,
-          display: "flex",
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        <Button onClick={(e) => startPractice(e, setStarted, startTimer)}>
-          <Typography variant="h1">Start</Typography>
-        </Button>
-      </Paper>
-    </Grid>
-  );
-};
+      <Grid container direction="column">
+        <DisplayBar />
+        <Grid item container>
+          <Grid item xs={1} />
 
-const Arena = () => {
-  const { started } = useContext(AppContext);
-
-  return (
-    <Grid container direction="column">
-      {started ? (
-        <>
-          <DisplayBar />
-          <Grid item container>
-            <Grid item xs={1} />
-
-            <Grid item container xs={10}>
-              <Grid item container style={{ justifyContent: "center" }}>
-                <Grid item xs={10}>
-                  <Paper
-                    elevation={5}
-                    style={{
-                      margin: "1.5rem",
-                      display: "flex",
-                      flexGrow: 1,
-                      minHeight: 400,
-                    }}
-                  >
-                    <Display />
-                  </Paper>
-                </Grid>
-              </Grid>
-              <Grid item container style={{ justifyContent: "center" }}>
-                <Grid
-                  item
-                  xs={10}
-                  style={{ display: "flex", justifyContent: "center" }}
+          <Grid item container xs={10}>
+            <Grid item container style={{ justifyContent: "center" }}>
+              <Grid item xs={10}>
+                <Paper
+                  elevation={5}
+                  style={{
+                    margin: "1.5rem",
+                    display: "flex",
+                    flexGrow: 1,
+                    minHeight: 400,
+                  }}
                 >
-                  <Paper
-                    elevation={3}
-                    style={{
-                      margin: "1rem 1.5rem",
-                      display: "flex",
-                      flexGrow: 1,
-                    }}
-                  >
-                    <UserInput />
-                  </Paper>
-                </Grid>
+                  <Display />
+                </Paper>
               </Grid>
             </Grid>
-
-            <Grid item sm={1} />
+            <Grid item container style={{ justifyContent: "center" }}>
+              <Grid
+                item
+                xs={10}
+                style={{ display: "flex", justifyContent: "center" }}
+              >
+                <Paper
+                  elevation={3}
+                  style={{
+                    margin: "1rem 1.5rem",
+                    display: "flex",
+                    flexGrow: 1,
+                  }}
+                >
+                  <UserInput />
+                </Paper>
+              </Grid>
+            </Grid>
           </Grid>
-        </>
-      ) : (
-        <Starter />
-      )}
-    </Grid>
+
+          <Grid item sm={1} />
+        </Grid>
+      </Grid>
+    </ArenaContext.Provider>
   );
 };
 

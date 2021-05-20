@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext } from "react";
 import { ThemeColor } from "./Colors";
 
 export interface Word {
@@ -20,10 +20,7 @@ interface WordsContext {
   setLastEntered: Function;
   wpm: number;
   setWpm: Function;
-  startTimer: Function;
   stopTimer: Function;
-  started: boolean;
-  setStarted: Function;
   time: number;
   setTime: Function;
   charCount: number;
@@ -49,10 +46,7 @@ const AppContext = React.createContext<WordsContext>({
   setLastEntered: () => {},
   wpm: 0,
   setWpm: () => {},
-  startTimer: () => {},
   stopTimer: () => {},
-  started: false,
-  setStarted: () => {},
   time: -1,
   setTime: () => {},
   charCount: 0,
@@ -64,4 +58,24 @@ const AppContext = React.createContext<WordsContext>({
   setCurrentSum: () => {},
 });
 
-export { AppContext };
+interface TypingContext {
+  typing: boolean;
+  setTyping: Function;
+}
+
+const ArenaContext = createContext<TypingContext>({
+  typing: false,
+  setTyping: () => {},
+});
+
+interface TimeContext {
+  startTimer: Function;
+  stopTimer: Function;
+}
+
+const TimerContext = createContext<TimeContext>({
+  startTimer: () => {},
+  stopTimer: () => {},
+});
+
+export { AppContext, ArenaContext, TimerContext };

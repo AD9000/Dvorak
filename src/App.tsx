@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 
 import Arena from "./components/Arena/arena";
-import { Word, AppContext } from "./components/Context";
+import { Word, AppContext, TimerContext } from "./components/Context";
 import "./App.css";
 import { HighlightColors, ThemeColor } from "./components/Colors";
 import { makeStyles, Theme, createStyles, colors } from "@material-ui/core";
-import { WORD_COUNT } from "./components/constants";
+import { WORD_COUNT, WORD_SIZE } from "./components/Constants";
 import { track } from "./components/analytics";
+import Starter from "./components/Starter";
+import UserInput from "./components/Arena/Input";
+import { Congrats } from "./components/Congrats";
 
 // What a legend
 const durstenfeldShuffle = (array: string[]) => {
@@ -30,6 +33,8 @@ const App = () => {
   const [time, setTime] = useState<number>(-1);
   const [lastWord, setLastWord] = useState<number>(-1);
   const [currentSum, setCurrentSum] = useState<number>(0);
+
+  const [done, setDone] = useState(false);
 
   // imagine not using a hardcoded list of words
   // Jk, this is temporary
@@ -57,25 +62,25 @@ const App = () => {
   };
 
   const startTimer = () => {
-    // no need for an active timer
     if (started) {
       return;
-    } else {
-      // timer is set to the current time
-      setTimer(Date.now());
-      setStarted(true);
     }
+    setStarted(true);
+    setTime(0);
   };
 
   const stopTimer = () => {
     if (!started) {
       return;
-    } else {
-      setStarted(false);
     }
+    setStarted(false);
   };
 
   const nextWord = () => {
+    if (currentWord === WORD_SIZE - 1) {
+      stopTimer();
+      setDone(true);
+    }
     setCurrentWord(currentWord + 1);
   };
   useEffect(track);
@@ -94,41 +99,51 @@ const App = () => {
     }
   }, [currentWord]);
 
+  useEffect(() => {
+    if (!started) {
+      return;
+    }
+    const updateTime = setTimeout(() => {
+      setTime(time + 1);
+    }, 1000);
+    return () => clearTimeout(updateTime);
+  }, [time]);
+
   return (
-    <AppContext.Provider
-      value={{
-        words,
-        setWords,
-        displayedWords,
-        setDisplayedWords,
-        updateWord,
-        currentWord,
-        nextWord,
-        entered,
-        setEntered,
-        lastEntered,
-        setLastEntered,
-        wpm,
-        setWpm,
-        startTimer,
-        stopTimer,
-        started,
-        setStarted,
-        time,
-        setTime,
-        charCount,
-        setCharCount,
-        timer,
-        lastWord,
-        setLastWord,
-        currentSum,
-        setCurrentSum,
-      }}
-    >
-      <Wrapper>
-        <Arena />
-      </Wrapper>
-    </AppContext.Provider>
+    <TimerContext.Provider value={{ startTimer, stopTimer }}>
+      <AppContext.Provider
+        value={{
+          words,
+          setWords,
+          displayedWords,
+          setDisplayedWords,
+          updateWord,
+          currentWord,
+          nextWord,
+          entered,
+          setEntered,
+          lastEntered,
+          setLastEntered,
+          wpm,
+          setWpm,
+          stopTimer,
+          time,
+          setTime,
+          charCount,
+          setCharCount,
+          timer,
+          lastWord,
+          setLastWord,
+          currentSum,
+          setCurrentSum,
+        }}
+      >
+        <Wrapper>
+          {/* {started ? <Arena /> : <Starter setStarted={setStarted} />} */}
+          {done ? <Congrats /> : <Arena />}
+        </Wrapper>
+      </AppContext.Provider>
+    </TimerContext.Provider>
   );
 };
 

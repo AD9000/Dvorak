@@ -1,4 +1,4 @@
-import { TRACKING_ID } from "./constants";
+import { TRACKING_ID } from "./Constants";
 import ReactGA from "react-ga";
 
 const track = () => {
