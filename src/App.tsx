@@ -77,7 +77,7 @@ const App = () => {
   };
 
   const nextWord = () => {
-    if (currentWord === WORD_SIZE - 1) {
+    if (currentWord >= WORD_COUNT - 1) {
       stopTimer();
       setDone(true);
     }
