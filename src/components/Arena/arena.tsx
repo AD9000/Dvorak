@@ -155,13 +155,13 @@ const WPMDisplay = () => {
 
 const WPM = () => {
   // measure WPM every 1 second
-  const { time, currentWord, charCount, setWpm } = useContext(AppContext);
+  const { time, charCount, setWpm } = useContext(AppContext);
 
   useEffect(() => {
     if (time < 1) {
       return;
     }
-    console.log("oh would you look at the index:", charCount);
+    // console.log("oh would you look at the index:", charCount);
     const timeMins = time / 60;
     const wpm = Math.ceil((charCount + 1) / (WORD_SIZE * timeMins));
     setWpm(wpm);
@@ -184,10 +184,10 @@ const DisplayBar = () => {
 const Arena = () => {
   const [typing, setTyping] = useState(false);
   const { entered, time } = useContext(AppContext);
-  useEffect(() => {
-    console.log("entered", entered);
-    console.log("time", time);
-  });
+  // useEffect(() => {
+  //   console.log("entered", entered);
+  //   console.log("time", time);
+  // });
 
   return (
     <ArenaContext.Provider

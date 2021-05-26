@@ -62,10 +62,9 @@ const App = () => {
   };
 
   const startTimer = () => {
-    if (started) {
+    if (done) {
       return;
     }
-    setStarted(true);
     setTime(0);
   };
 
@@ -73,7 +72,7 @@ const App = () => {
     if (!started) {
       return;
     }
-    setStarted(false);
+    setDone(true);
   };
 
   const nextWord = () => {
@@ -139,8 +138,15 @@ const App = () => {
         }}
       >
         <Wrapper>
-          {/* {started ? <Arena /> : <Starter setStarted={setStarted} />} */}
-          {done ? <Congrats /> : <Arena />}
+          {started ? (
+            done ? (
+              <Congrats />
+            ) : (
+              <Arena />
+            )
+          ) : (
+            <Starter setStarted={setStarted} />
+          )}
         </Wrapper>
       </AppContext.Provider>
     </TimerContext.Provider>
