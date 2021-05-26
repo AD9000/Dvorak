@@ -40,13 +40,15 @@ const Congrats = () => {
                       display: "flex",
                       flexGrow: 1,
                       justifyContent: "center",
-                      alignItems: "center",
+                      alignItems: "flex-end",
+                      paddingBottom: 35,
                     }}
                   >
                     <Typography
                       variant="h2"
                       style={{
                         textAlign: "center",
+                        fontWeight: 450,
                       }}
                     >
                       Congratulations!
@@ -61,7 +63,8 @@ const Congrats = () => {
                     }}
                   >
                     <Typography variant="h5" style={{ textAlign: "center" }}>
-                      Your typing speed was {wpm} WPM
+                      Your typing speed was <strong>{wpm}</strong> words per
+                      minute
                     </Typography>
                   </div>
                 </Paper>
