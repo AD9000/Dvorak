@@ -202,10 +202,6 @@ const DisplayBar = () => {
 const Arena = () => {
   const [typing, setTyping] = useState(false);
   const { entered, time } = useContext(AppContext);
-  // useEffect(() => {
-  //   console.log("entered", entered);
-  //   console.log("time", time);
-  // });
 
   return (
     <ArenaContext.Provider
@@ -224,9 +220,10 @@ const Arena = () => {
             style={{
               padding: "1rem",
             }}
+            direction="column"
           >
             <Grid item container style={{ justifyContent: "flex-begin" }}>
-              <Grid item>
+              <Grid item style={{ minHeight: "95%" }}>
                 <Paper
                   elevation={5}
                   style={{
@@ -234,28 +231,23 @@ const Arena = () => {
                     marginTop: "2rem",
                     display: "flex",
                     flexGrow: 1,
-                    minHeight: 400,
+                    minHeight: "90%",
                   }}
                 >
                   <Display />
                 </Paper>
               </Grid>
             </Grid>
-            <Grid
-              item
-              container
-              // xs={12}
-              style={{ justifyContent: "flex-begin" }}
-            >
+            <Grid item container style={{ justifyContent: "flex-begin" }}>
               <Grid
                 item
                 container
-                style={{ display: "flex", justifyContent: "center" }}
+                style={{ display: "flex", justifyContent: "flex-begin" }}
               >
                 <Paper
                   elevation={3}
                   style={{
-                    margin: "1rem 1.5rem",
+                    margin: "1rem",
                     display: "flex",
                     flexGrow: 1,
                   }}
