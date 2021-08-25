@@ -160,6 +160,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       flex: 1,
       backgroundColor: colors.brown[200],
+      overflow: "scroll",
     },
   })
 );

@@ -164,6 +164,7 @@ const WPM = () => {
     // console.log("oh would you look at the index:", charCount);
     const timeMins = time / 60;
     const wpm = Math.ceil((charCount + 1) / (WORD_SIZE * timeMins));
+
     setWpm(wpm);
   }, [time]);
 
@@ -172,9 +173,26 @@ const WPM = () => {
 
 const DisplayBar = () => {
   return (
-    <Grid item container style={{ padding: "2rem", paddingBottom: "0.5rem" }}>
-      <Grid item xs={9} />
-      <Grid item xs={3} style={{ display: "flex", justifyContent: "center" }}>
+    <Grid
+      item
+      xs={3}
+      container
+      style={{
+        padding: "2rem",
+        paddingTop: "3rem",
+        justifyContent: "flex-end",
+      }}
+    >
+      <Grid item xs={7} />
+      <Grid
+        item
+        xs={5}
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "flex-start",
+        }}
+      >
         <WPM />
       </Grid>
     </Grid>
@@ -196,18 +214,24 @@ const Arena = () => {
         setTyping,
       }}
     >
-      <Grid container direction="column">
+      <Grid container>
         <DisplayBar />
-        <Grid item container>
-          <Grid item xs={1} />
-
-          <Grid item container xs={10}>
-            <Grid item container style={{ justifyContent: "center" }}>
-              <Grid item xs={10}>
+        <Grid item container xs={9} style={{ justifyContent: "flex-begin" }}>
+          <Grid
+            item
+            container
+            xs={10}
+            style={{
+              padding: "1rem",
+            }}
+          >
+            <Grid item container style={{ justifyContent: "flex-begin" }}>
+              <Grid item>
                 <Paper
                   elevation={5}
                   style={{
-                    margin: "1.5rem",
+                    margin: "1rem",
+                    marginTop: "2rem",
                     display: "flex",
                     flexGrow: 1,
                     minHeight: 400,
@@ -217,10 +241,15 @@ const Arena = () => {
                 </Paper>
               </Grid>
             </Grid>
-            <Grid item container style={{ justifyContent: "center" }}>
+            <Grid
+              item
+              container
+              // xs={12}
+              style={{ justifyContent: "flex-begin" }}
+            >
               <Grid
                 item
-                xs={10}
+                container
                 style={{ display: "flex", justifyContent: "center" }}
               >
                 <Paper
@@ -236,8 +265,6 @@ const Arena = () => {
               </Grid>
             </Grid>
           </Grid>
-
-          <Grid item sm={1} />
         </Grid>
       </Grid>
     </ArenaContext.Provider>
